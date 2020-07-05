@@ -67,6 +67,9 @@ class DtlsSocket extends stream.Duplex {
 
 	incrementNumRegistrationCycles() {
 		this.numRegistrationCycles += 1;
+		if (this.numRegistrationCycles > 1) {
+			console.log('[socket.js](incrementNumRegistrationCycles) Have multiple listeners YOOOOOO: ', this.numRegistrationCycles);
+		}
 	}
 
 	_onMessage(msg) {
