@@ -13,6 +13,8 @@ class DtlsSocket extends stream.Duplex {
 		super({ allowHalfOpen: false });
 		options = options || {};
 
+		this.setMaxListeners(20); // FIXME: REMOVE
+
 		this.remoteAddress = options.host;
 		this.remotePort = options.port;
 		if(options.socket) {
