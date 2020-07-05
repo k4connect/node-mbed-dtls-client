@@ -65,6 +65,10 @@ class DtlsSocket extends stream.Duplex {
 		return this.dgramSocket.address();
 	}
 
+	incrementNumRegistrationCycles() {
+		this.numRegistrationCycles += 1;
+	}
+
 	_onMessage(msg) {
 		if (!this.mbedSocket) {
 			return;
