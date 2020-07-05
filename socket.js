@@ -25,12 +25,13 @@ class DtlsSocket extends stream.Duplex {
 
 		// FIXME: REMOVE
 		this.cows = `${Date.now()}${Math.round(Math.random() * 100000)}`;
+		this.numRegistrationCycles = 0;
 
 		this._onMessage = this._onMessage.bind(this);
 		this.dgramSocket.on('message', this._onMessage);
 		this.dgramSocket.once('error', err => {
 			this.emit('error', err);
-			console.log('[socket.js](once error) Got error: ', new Date().toISOString(), this.cows, err);
+			console.log('[socket.js](once error) Got error: ', new Date().toISOString(), this.cows, this.numRegistrationCycles, err);
 			this._end();
 		});
 		this.dgramSocket.once('close', () => {
@@ -118,7 +119,7 @@ class DtlsSocket extends stream.Duplex {
 
 	_error(code, msg) {
 		if (code === MBEDTLS_ERR_SSL_PEER_CLOSE_NOTIFY) {
-			console.log('[socket.js](_error) Got peer close notify: ', new Date().toISOString(), this.cows, code);
+			console.log('[socket.js](_error) Got peer close notify: ', new Date().toISOString(), this.cows, this.numRegistrationCycles, code);
 			this._end();
 			return;
 		}
@@ -131,18 +132,18 @@ class DtlsSocket extends stream.Duplex {
 			this.emit('error', code, msg);
 		}
 
-		console.log('[socket.js](_error) Got other error: ', new Date().toISOString(), this.cows, code);
+		console.log('[socket.js](_error) Got other error: ', new Date().toISOString(), this.cows, this.numRegistrationCycles, code);
 		this._end();
 	}
 
 	end() {
 		this._sendNotify = true;
-		console.log('[socket.js](end) Received command to end session: ', new Date().toISOString(), this.cows);
+		console.log('[socket.js](end) Received command to end session: ', new Date().toISOString(), this.cows, this.numRegistrationCycles);
 		this._end();
 	}
 
 	_end() {
-		console.log('[socket.js](_end) Internal, going to end session: ', new Date().toISOString(), this.cows);
+		console.log('[socket.js](_end) Internal, going to end session: ', new Date().toISOString(), this.cows, this.numRegistrationCycles);
 
 		if (this._ending) {
 			return;
@@ -165,7 +166,7 @@ class DtlsSocket extends stream.Duplex {
 	}
 
 	_closeSocket() {
-		console.log('[socket.js](_closeSocket) Internal, going to closeSocket: ', new Date().toISOString(), this.cows);
+		console.log('[socket.js](_closeSocket) Internal, going to closeSocket: ', new Date().toISOString(), this.cows, this.numRegistrationCycles);
 
 		if (!this.dgramSocket) {
 			this._socketClosed();
@@ -181,7 +182,7 @@ class DtlsSocket extends stream.Duplex {
 	}
 
 	_socketClosed() {
-		console.log('[socket.js](_socketClosed) Socket cleaned up: ', new Date().toISOString(), this.cows);
+		console.log('[socket.js](_socketClosed) Socket cleaned up: ', new Date().toISOString(), this.cows, this.numRegistrationCycles);
 
 		this.dgramSocket = null;
 		this.emit('close', this._hadError);
